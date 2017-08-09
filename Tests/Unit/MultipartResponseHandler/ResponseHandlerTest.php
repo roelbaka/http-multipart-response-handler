@@ -32,7 +32,7 @@ class ResponseHandlerTest extends TestCase
         $multiPartResponse = $this->responseHandler->createMultipartResponse(200, $responses);
 
         $this->assertInstanceOf(Response::class, $multiPartResponse);
-        $this->assertEquals("multipart/form-data", $multiPartResponse->getHeader('Content-Type')[0]);
+        $this->assertEquals("multipart/mixed", $multiPartResponse->getHeader('Content-Type')[0]);
         $this->assertEquals(
             'content1' . self::DELIMITER . 'content2' . self::DELIMITER . 'content3',
             (string)$multiPartResponse->getBody()

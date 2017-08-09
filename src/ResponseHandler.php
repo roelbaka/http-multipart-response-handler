@@ -25,7 +25,7 @@ class ResponseHandler
      */
     public function createMultipartResponse(int $status, array $responses) : Response
     {
-        $multipartResponse = (new Response($status))->withHeader('Content-Type', 'multipart/form-data');
+        $multipartResponse = (new Response($status))->withHeader('Content-Type', 'multipart/mixed');
 
         $body = implode($this->delimiter, array_map(function (ResponseInterface $response) : string {
             return (string)$response->getBody();
