@@ -9,14 +9,14 @@ use Slim\Http\Response;
 
 class ResponseHandlerTest extends TestCase
 {
-    const DELIMITER = '||';
+    const BOUNDARY = '||||';
 
     /** @var ResponseHandler */
     private $responseHandler;
 
     public function setUp()
     {
-        $this->responseHandler = new ResponseHandler(self::DELIMITER);
+        $this->responseHandler = new ResponseHandler(self::BOUNDARY);
     }
 
     public function testCreateMultipartResponseShouldReturnResponseContainingAllTheResponsesContent()
@@ -33,17 +33,24 @@ class ResponseHandlerTest extends TestCase
 
         $this->assertInstanceOf(Response::class, $multiPartResponse);
         $this->assertEquals("multipart/mixed", $multiPartResponse->getHeader('Content-Type')[0]);
+        $this->assertEquals("boundary=" . self::BOUNDARY, $multiPartResponse->getHeader('Content-Type')[1]);
         $this->assertEquals(
-            'content1' . self::DELIMITER . 'content2' . self::DELIMITER . 'content3',
+            "--||||" . Response::EOL . "content1" . Response::EOL .
+            "--||||" . Response::EOL . "content2" . Response::EOL .
+            "--||||" . Response::EOL . "content3" . Response::EOL .
+            "--||||--",
             (string)$multiPartResponse->getBody()
         );
     }
 
     public function testCreateResponsesFromMultiPartResponse()
     {
-        $multipartResponse = new Response();
+        $multipartResponse = (new Response())->withHeader(
+            'Content-Type',
+            ['multipart/mixed', 'boundary=' . self::BOUNDARY]
+        );
         $multipartResponse->getBody()->write(
-            'content1' . self::DELIMITER . 'content2' . self::DELIMITER . 'content3'
+            'content1' . self::BOUNDARY . 'content2' . self::BOUNDARY . 'content3'
         );
 
         $responses = $this->responseHandler->createResponsesFromMultiPartResponse($multipartResponse);
