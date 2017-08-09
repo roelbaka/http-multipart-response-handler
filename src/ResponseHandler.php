@@ -18,7 +18,7 @@ class ResponseHandler
         $this->delimiter = $delimiter;
     }
 
-    /**ƒ
+    /**
      * @param int $status
      * @param ResponseInterface[] $responses
      * @return Response
